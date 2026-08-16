@@ -12,6 +12,8 @@ import {
   faHandPointer,
   faVolumeHigh,
   faVolumeXmark,
+  faVolumeLow,
+  faMusic,
   faMobileScreenButton,
   faRotateLeft,
   faCrown,
@@ -29,6 +31,8 @@ interface NavDrawerProps {
   onOpenHistory: () => void;
   onOpenGuide: () => void;
   onOpenSettings: () => void;
+  onOpenSenas: () => void;
+  onOpenTrucoGuide: () => void;
   faceToFaceEnabled: boolean;
   onToggleFaceToFace: () => void;
   directScoreTapEnabled: boolean;
@@ -37,6 +41,10 @@ interface NavDrawerProps {
   onToggleSound: () => void;
   vibrationEnabled: boolean;
   onToggleVibration: () => void;
+  musicEnabled: boolean;
+  musicVolume: number;
+  onToggleMusic: () => void;
+  onChangeMusicVolume: (vol: number) => void;
   onResetGame: () => void;
   historyCount: number;
 }
@@ -51,6 +59,8 @@ export default function NavDrawer({
   onOpenHistory,
   onOpenGuide,
   onOpenSettings,
+  onOpenSenas,
+  onOpenTrucoGuide,
   faceToFaceEnabled,
   onToggleFaceToFace,
   directScoreTapEnabled,
@@ -59,6 +69,10 @@ export default function NavDrawer({
   onToggleSound,
   vibrationEnabled,
   onToggleVibration,
+  musicEnabled,
+  musicVolume,
+  onToggleMusic,
+  onChangeMusicVolume,
   onResetGame,
   historyCount
 }: NavDrawerProps) {
@@ -185,6 +199,46 @@ export default function NavDrawer({
                     </div>
                     <div className="text-[10px] text-stone-400">
                       Valores oficiales de cartas y envido
+                    </div>
+                  </div>
+                </div>
+              </button>
+
+              {/* Señas del Truco */}
+              <button
+                onClick={() => handleAction(onOpenSenas)}
+                className="w-full p-2.5 bg-stone-950/60 hover:bg-stone-900 border border-stone-800 hover:border-emerald-700/60 rounded-xl text-left transition-all flex items-center justify-between group pop-btn"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-lg">
+                    👁️
+                  </div>
+                  <div>
+                    <div className="font-bold text-stone-100 group-hover:text-emerald-300">
+                      Señas del Truco
+                    </div>
+                    <div className="text-[10px] text-stone-400">
+                      El código secreto de la mesa criolla
+                    </div>
+                  </div>
+                </div>
+              </button>
+
+              {/* Guía para Aprender */}
+              <button
+                onClick={() => handleAction(onOpenTrucoGuide)}
+                className="w-full p-2.5 bg-stone-950/60 hover:bg-stone-900 border border-stone-800 hover:border-amber-700/60 rounded-xl text-left transition-all flex items-center justify-between group pop-btn"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-lg bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-lg">
+                    📖
+                  </div>
+                  <div>
+                    <div className="font-bold text-stone-100 group-hover:text-amber-300">
+                      Cómo Jugar al Truco
+                    </div>
+                    <div className="text-[10px] text-stone-400">
+                      Guía completa para principiantes
                     </div>
                   </div>
                 </div>
@@ -335,6 +389,59 @@ export default function NavDrawer({
                     }`}
                   />
                 </button>
+              </div>
+
+              {/* Música de Fondo */}
+              <div className="border-t border-stone-800/60 pt-2.5">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <FontAwesomeIcon
+                      icon={faMusic}
+                      className={`text-xs w-4 ${musicEnabled ? 'text-emerald-400' : 'text-stone-500'}`}
+                    />
+                    <div>
+                      <span className="font-semibold text-stone-200 block text-xs">Música de Fondo</span>
+                      <span className="text-[9px] text-stone-400">Quiero Retruco (en bucle)</span>
+                    </div>
+                  </div>
+                  <button
+                    id="drawer-music-toggle"
+                    onClick={onToggleMusic}
+                    className={`w-10 h-5 rounded-full transition-colors relative flex-shrink-0 ${
+                      musicEnabled ? 'bg-emerald-600' : 'bg-stone-800'
+                    }`}
+                  >
+                    <div
+                      className={`w-3.5 h-3.5 rounded-full bg-white absolute top-0.5 transition-transform ${
+                        musicEnabled ? 'translate-x-5' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+                {/* Slider de volumen de música */}
+                <div className={`flex items-center gap-2 transition-opacity duration-200 ${musicEnabled ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
+                  <FontAwesomeIcon
+                    icon={musicVolume < 0.4 ? faVolumeLow : faVolumeHigh}
+                    className="text-[10px] text-amber-400/70 w-3"
+                  />
+                  <input
+                    id="drawer-music-volume"
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={musicVolume}
+                    onChange={(e) => onChangeMusicVolume(parseFloat(e.target.value))}
+                    className="flex-1 h-1 rounded-full appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #10b981 ${musicVolume * 100}%, #292524 ${musicVolume * 100}%)`
+                    }}
+                  />
+                  <FontAwesomeIcon
+                    icon={faVolumeHigh}
+                    className="text-[10px] text-amber-400/70 w-3"
+                  />
+                </div>
               </div>
             </div>
           </div>

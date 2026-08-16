@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTrophy,
@@ -39,6 +39,8 @@ import TournamentModal from './TournamentModal';
 import SoundboardModal from './SoundboardModal';
 import StatsModal, { type MatchRecord } from './StatsModal';
 import NavDrawer from './NavDrawer';
+import SenasModal from './SenasModal';
+import TrucoGuideModal from './TrucoGuideModal';
 import { sound } from '../utils/sound';
 
 interface Player {
@@ -70,6 +72,8 @@ export default function AnotaTruco() {
   const [isTournamentOpen, setIsTournamentOpen] = useState(false);
   const [isSoundboardOpen, setIsSoundboardOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [isSenasOpen, setIsSenasOpen] = useState(false);
+  const [isTrucoGuideOpen, setIsTrucoGuideOpen] = useState(false);
   const [cantoModalTargetPlayer, setCantoModalTargetPlayer] = useState<Player | null>(null);
 
   // User Settings
@@ -79,6 +83,9 @@ export default function AnotaTruco() {
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
   const [faceToFaceEnabled, setFaceToFaceEnabled] = useState(false);
   const [directScoreTapEnabled, setDirectScoreTapEnabled] = useState(true);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+  const [musicVolume, setMusicVolume] = useState(0.45);
+  const bgMusicRef = useRef<HTMLAudioElement | null>(null);
 
   // Edición rápida de nombres & Animación de Score
   const [editingPlayerId, setEditingPlayerId] = useState<number | null>(null);
@@ -113,6 +120,15 @@ export default function AnotaTruco() {
       const savedTap = localStorage.getItem('anotatruco_direct_tap');
       if (savedTap !== null) {
         setDirectScoreTapEnabled(savedTap === 'true');
+      }
+
+      const savedMusicEnabled = localStorage.getItem('anotatruco_music_enabled');
+      if (savedMusicEnabled !== null) {
+        setMusicEnabled(savedMusicEnabled === 'true');
+      }
+      const savedMusicVol = localStorage.getItem('anotatruco_music_volume');
+      if (savedMusicVol !== null) {
+        setMusicVolume(parseFloat(savedMusicVol));
       }
 
       // Cargar partida guardada si existe
@@ -159,6 +175,46 @@ export default function AnotaTruco() {
     return () => {
       if (wakeLock) {
         try { wakeLock.release(); } catch {}
+      }
+    };
+  }, []);
+
+  // Gestionar reproducción de música de fondo
+  useEffect(() => {
+    if (showSplash) {
+      // Pausar la música del juego al volver al splash (evita que suene doble)
+      if (bgMusicRef.current) {
+        bgMusicRef.current.pause();
+      }
+      return;
+    }
+    if (musicEnabled) {
+      if (!bgMusicRef.current) {
+        bgMusicRef.current = new Audio('/Quiero Retruco.mp3');
+        bgMusicRef.current.loop = true;
+      }
+      bgMusicRef.current.volume = musicVolume;
+      bgMusicRef.current.play().catch(() => {});
+    } else {
+      if (bgMusicRef.current) {
+        bgMusicRef.current.pause();
+      }
+    }
+  }, [musicEnabled, showSplash]);
+
+  // Sincronizar volumen sin cortar la música
+  useEffect(() => {
+    if (bgMusicRef.current) {
+      bgMusicRef.current.volume = musicVolume;
+    }
+  }, [musicVolume]);
+
+  // Limpiar audio al desmontar
+  useEffect(() => {
+    return () => {
+      if (bgMusicRef.current) {
+        bgMusicRef.current.pause();
+        bgMusicRef.current.src = '';
       }
     };
   }, []);
@@ -356,6 +412,21 @@ export default function AnotaTruco() {
     sound.playClick();
     try {
       localStorage.setItem('anotatruco_direct_tap', String(nextVal));
+    } catch {}
+  };
+
+  const toggleMusic = () => {
+    const nextVal = !musicEnabled;
+    setMusicEnabled(nextVal);
+    try {
+      localStorage.setItem('anotatruco_music_enabled', String(nextVal));
+    } catch {}
+  };
+
+  const changeMusicVolume = (vol: number) => {
+    setMusicVolume(vol);
+    try {
+      localStorage.setItem('anotatruco_music_volume', String(vol));
     } catch {}
   };
 
@@ -791,6 +862,8 @@ export default function AnotaTruco() {
           onOpenHistory={() => setIsHistoryOpen(true)}
           onOpenGuide={() => setIsGuideOpen(true)}
           onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenSenas={() => setIsSenasOpen(true)}
+          onOpenTrucoGuide={() => setIsTrucoGuideOpen(true)}
           faceToFaceEnabled={faceToFaceEnabled}
           onToggleFaceToFace={toggleFaceToFace}
           directScoreTapEnabled={directScoreTapEnabled}
@@ -799,6 +872,10 @@ export default function AnotaTruco() {
           onToggleSound={toggleSound}
           vibrationEnabled={vibrationEnabled}
           onToggleVibration={toggleVibration}
+          musicEnabled={musicEnabled}
+          musicVolume={musicVolume}
+          onToggleMusic={toggleMusic}
+          onChangeMusicVolume={changeMusicVolume}
           onResetGame={resetGame}
           historyCount={historyEntries.length}
         />
@@ -836,6 +913,16 @@ export default function AnotaTruco() {
         <StatsModal
           isOpen={isStatsOpen}
           onClose={() => setIsStatsOpen(false)}
+        />
+
+        <SenasModal
+          isOpen={isSenasOpen}
+          onClose={() => setIsSenasOpen(false)}
+        />
+
+        <TrucoGuideModal
+          isOpen={isTrucoGuideOpen}
+          onClose={() => setIsTrucoGuideOpen(false)}
         />
 
         {cantoModalTargetPlayer && (
