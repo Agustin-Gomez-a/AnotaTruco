@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#1b4d2e"/>
+      <stop offset="70%" stop-color="#0a1f13"/>
+      <stop offset="100%" stop-color="#050d08"/>
+    </radialGradient>
+    <linearGradient id="goldRim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="50%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+    <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fae8cf"/>
+      <stop offset="50%" stop-color="#d4a373"/>
+      <stop offset="100%" stop-color="#a97142"/>
+    </linearGradient>
+    <radialGradient id="headGrad" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="60%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#172554"/>
+    </radialGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.7"/>
+    </filter>
+    <filter id="matchShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="4" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base with Gold Rim -->
+  <rect x="16" y="16" width="480" height="480" rx="110" fill="url(#bgGlow)" stroke="url(#goldRim)" stroke-width="12" filter="url(#dropShadow)"/>
+
+  <!-- Inner Embossed Border -->
+  <rect x="36" y="36" width="440" height="440" rx="90" fill="none" stroke="rgba(253, 224, 71, 0.25)" stroke-width="3" stroke-dasharray="8 6"/>
+
+  <!-- Crown / Top Emblem -->
+  <g transform="translate(256, 120) scale(0.95)">
+    <path d="M-60 20 L-40 -35 L-10 5 L0 -45 L10 5 L40 -35 L60 20 Z" fill="url(#goldRim)" stroke="#fef08a" stroke-width="3"/>
+    <circle cx="0" cy="-45" r="8" fill="#fef08a"/>
+    <circle cx="-40" cy="-35" r="7" fill="#fef08a"/>
+    <circle cx="40" cy="-35" r="7" fill="#fef08a"/>
+  </g>
+
+  <!-- Group of 5 Matchsticks (Fósforos Criollos) -->
+  <g id="matches" transform="translate(136, 160)" filter="url(#matchShadow)">
+    <!-- 1. Left Match (Vertical) -->
+    <rect x="0" y="0" width="22" height="240" rx="4" fill="url(#woodGrad)"/>
+    <circle cx="11" cy="0" r="16" fill="url(#headGrad)"/>
+
+    <!-- 2. Top Match (Horizontal) -->
+    <rect x="0" y="0" width="240" height="22" rx="4" fill="url(#woodGrad)"/>
+    <circle cx="240" cy="11" r="16" fill="url(#headGrad)"/>
+
+    <!-- 3. Right Match (Vertical) -->
+    <rect x="218" y="0" width="22" height="240" rx="4" fill="url(#woodGrad)"/>
+    <circle cx="229" cy="240" r="16" fill="url(#headGrad)"/>
+
+    <!-- 4. Bottom Match (Horizontal) -->
+    <rect x="0" y="218" width="240" height="22" rx="4" fill="url(#woodGrad)"/>
+    <circle cx="0" cy="229" r="16" fill="url(#headGrad)"/>
+
+    <!-- 5. Diagonal Match (Crossing) -->
+    <g transform="rotate(45, 10, 10)">
+      <rect x="10" y="10" width="310" height="22" rx="4" fill="url(#woodGrad)" stroke="#fef08a" stroke-width="1.5" filter="url(#matchShadow)"/>
+      <circle cx="320" cy="21" r="16" fill="url(#headGrad)"/>
+    </g>
+  </g>
+
+  <!-- Title Text -->
+  <text x="256" y="452" font-family="'Cinzel', serif" font-weight="900" font-size="34" fill="#fde047" text-anchor="middle" letter-spacing="4">
+    ANOTATRUCO
+  </text>
+</svg>

@@ -1,0 +1,57 @@
+{
+  "general": {
+    "appName": "AnotaTruco",
+    "appVersionName": "1.0.0",
+    "appVersionCode": 1,
+    "initialUrl": "https://agustin-gomez-a.github.io/AnotaTruco/",
+    "packageName": "com.anotatruco.app",
+    "forceScreenOrientation": {
+      "android": "portrait",
+      "ios": "portrait"
+    },
+    "screenOrientation": "portrait",
+    "statusBar": {
+      "style": "light",
+      "color": "#0b0d0c",
+      "overlay": false
+    },
+    "keepScreenOn": true,
+    "userAgentAdd": "Median/1.0 (AnotaTruco)",
+    "enableHardwareAcceleration": true
+  },
+  "navigation": {
+    "sidebar": {
+      "enabled": false
+    },
+    "tabNavigation": {
+      "enabled": false
+    },
+    "toolbar": {
+      "enabled": false
+    }
+  },
+  "android": {
+    "packageId": "com.anotatruco.app",
+    "appVersion": "1.0.0",
+    "appVersionCode": 1,
+    "permissions": {
+      "vibrate": true,
+      "camera": false,
+      "fineLocation": false,
+      "coarseLocation": false,
+      "readExternalStorage": false,
+      "writeExternalStorage": false,
+      "recordAudio": false,
+      "readContacts": false
+    },
+    "hardwareAcceleration": true,
+    "pullToRefresh": false,
+    "allowZoom": false
+  },
+  "styling": {
+    "theme": "dark",
+    "primaryColor": "#d4af37",
+    "accentColor": "#1b4d2e",
+    "backgroundColor": "#0b0d0c"
+  }
+}

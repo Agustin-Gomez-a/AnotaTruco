@@ -3,17 +3,43 @@ import AnotaTruco from '../components/AnotaTruco';
 import '../styles/global.css';
 ---
 
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    
+    <!-- Título y Descripción Oficial -->
+    <title>AnotaTruco 🧉 - Anotador Oficial de Truco Criollo</title>
+    <meta name="description" content="El anotador oficial de Truco Argentino. Llevá el conteo con fósforos 3D, tiza o porotos, control de la mano y tabla de cantos." />
+    <meta name="author" content="Chelit02014" />
+    
+    <!-- PWA & Web App Manifest -->
+    <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="generator" content={Astro.generator} />
-    <title>AnotaTruco 🧉 - Anotador Criollo</title>
-    <meta name="description" content="El anotador oficial del Truco Argentino. Llevá el marcador de tu partida de truco con fósforos criollos." />
+    <link rel="apple-touch-icon" href="/icon.svg" />
+
+    <!-- Meta Tags para Android WebView & iOS Standalone -->
+    <meta name="theme-color" content="#0b0d0c" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="AnotaTruco" />
+    <meta name="application-name" content="AnotaTruco" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Open Graph / Redes Sociales / Escaneo de Seguridad -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AnotaTruco - Anotador Criollo" />
+    <meta property="og:description" content="Anotador digital táctil de Truco Argentino con fósforos, tiza y porotos." />
+    <meta property="og:image" content="/icon.svg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="AnotaTruco" />
+    <meta name="twitter:description" content="Anotador oficial de Truco Argentino." />
   </head>
-  <body>
+  <body class="bg-[#0b0d0c] text-[#f7f3eb] min-h-[100svh] overflow-x-hidden antialiased">
     <AnotaTruco client:load />
   </body>
 </html>
