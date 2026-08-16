@@ -1,0 +1,19 @@
+---
+import AnotaTruco from '../components/AnotaTruco';
+import '../styles/global.css';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>AnotaTruco 🧉 - Anotador Criollo</title>
+    <meta name="description" content="El anotador oficial del Truco Argentino. Llevá el marcador de tu partida de truco con fósforos criollos." />
+  </head>
+  <body>
+    <AnotaTruco client:load />
+  </body>
+</html>
