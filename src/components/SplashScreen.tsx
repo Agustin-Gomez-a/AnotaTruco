@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlay,
@@ -6,7 +6,10 @@ import {
   faFire,
   faHandPointRight,
   faVolumeHigh,
-  faRotateLeft
+  faVolumeXmark,
+  faVolumeLow,
+  faRotateLeft,
+  faMusic
 } from '@fortawesome/free-solid-svg-icons';
 import { sound } from '../utils/sound';
 
@@ -21,9 +24,74 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onStart, savedMatchInfo }: SplashScreenProps) {
   const [isExiting, setIsExiting] = useState(false);
+  const [musicMuted, setMusicMuted] = useState(false);
+  const [musicVolume, setMusicVolume] = useState(0.45);
+  const [musicStarted, setMusicStarted] = useState(false);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const fadeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Inicializar el audio al montar
+  useEffect(() => {
+    const audio = new Audio('/Quiero Retruco.mp3');
+    audio.loop = true;
+    audio.volume = musicMuted ? 0 : musicVolume;
+    audioRef.current = audio;
+
+    // Intentar reproducir (puede necesitar interacción del usuario en algunos navegadores)
+    const tryPlay = () => {
+      audio.play().then(() => {
+        setMusicStarted(true);
+      }).catch(() => {
+        // Silencioso - el navegador bloqueó la reproducción automática
+      });
+    };
+    tryPlay();
+
+    // Si no arrancó solo, arrancar con la primera interacción
+    const onInteraction = () => {
+      if (!musicStarted && audio.paused) {
+        audio.play().then(() => setMusicStarted(true)).catch(() => {});
+      }
+      window.removeEventListener('pointerdown', onInteraction);
+    };
+    window.addEventListener('pointerdown', onInteraction);
+
+    return () => {
+      window.removeEventListener('pointerdown', onInteraction);
+      audio.pause();
+      audio.src = '';
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sincronizar volumen
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = musicMuted ? 0 : musicVolume;
+    }
+  }, [musicMuted, musicVolume]);
+
+  // Fade-out y detener música al iniciar partida
+  const stopMusicFadeOut = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || audio.paused) return;
+    const step = audio.volume / 12;
+    fadeIntervalRef.current = setInterval(() => {
+      if (!audioRef.current) return;
+      if (audioRef.current.volume > step) {
+        audioRef.current.volume = Math.max(0, audioRef.current.volume - step);
+      } else {
+        audioRef.current.volume = 0;
+        audioRef.current.pause();
+        if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+      }
+    }, 20);
+  }, []);
 
   const handleStart = (reset: boolean = false) => {
     sound.playClick();
+    stopMusicFadeOut();
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
       try { navigator.vibrate(25); } catch {}
     }
@@ -32,6 +100,31 @@ export default function SplashScreen({ onStart, savedMatchInfo }: SplashScreenPr
       onStart(reset);
     }, 240);
   };
+
+  const toggleMute = () => {
+    setMusicMuted(prev => !prev);
+    // Si estaba pausado por autoplay bloqueado, intentar arrancar al silenciar
+    if (audioRef.current && audioRef.current.paused && musicStarted === false) {
+      audioRef.current.play().then(() => setMusicStarted(true)).catch(() => {});
+    }
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const vol = parseFloat(e.target.value);
+    setMusicVolume(vol);
+    if (vol > 0 && musicMuted) setMusicMuted(false);
+    if (vol === 0) setMusicMuted(true);
+    // Si la música estaba pausada, arrancar
+    if (audioRef.current && audioRef.current.paused) {
+      audioRef.current.play().then(() => setMusicStarted(true)).catch(() => {});
+    }
+  };
+
+  const volumeIcon = musicMuted || musicVolume === 0
+    ? faVolumeXmark
+    : musicVolume < 0.4
+    ? faVolumeLow
+    : faVolumeHigh;
 
   return (
     <div
@@ -164,6 +257,48 @@ export default function SplashScreen({ onStart, savedMatchInfo }: SplashScreenPr
               <span>COMENZAR</span>
             </button>
           )}
+        </div>
+
+        {/* =========================================================
+            CONTROL DE MÚSICA DE INTRO
+            ========================================================= */}
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {/* Botón mute / unmute */}
+          <button
+            id="splash-music-toggle"
+            onClick={toggleMute}
+            title={musicMuted ? 'Activar música' : 'Silenciar música'}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-[10px] font-semibold transition-all duration-200 active:scale-95 ${
+              musicMuted
+                ? 'bg-stone-900 border-stone-700 text-stone-500'
+                : 'bg-emerald-950/60 border-emerald-700/50 text-emerald-400'
+            }`}
+          >
+            <FontAwesomeIcon icon={musicMuted ? faVolumeXmark : faMusic} className="text-[10px]" />
+            <span>{musicMuted ? 'Música off' : 'Quiero Retruco'}</span>
+          </button>
+
+          {/* Slider de volumen */}
+          <div className="flex items-center gap-1.5">
+            <FontAwesomeIcon
+              icon={volumeIcon}
+              className={`text-[10px] ${musicMuted ? 'text-stone-600' : 'text-amber-400'}`}
+            />
+            <input
+              id="splash-music-volume"
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={musicMuted ? 0 : musicVolume}
+              onChange={handleVolumeChange}
+              title="Volumen de la música"
+              className="w-20 h-1 rounded-full appearance-none cursor-pointer accent-amber-400 bg-stone-700"
+              style={{
+                background: `linear-gradient(to right, #f59e0b ${(musicMuted ? 0 : musicVolume) * 100}%, #44403c ${(musicMuted ? 0 : musicVolume) * 100}%)`
+              }}
+            />
+          </div>
         </div>
       </div>
 
