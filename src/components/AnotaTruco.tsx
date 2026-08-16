@@ -194,7 +194,6 @@ export default function AnotaTruco() {
     const newScore = Math.max(0, Math.min(target, targetPlayer.score + delta));
     if (newScore === targetPlayer.score) return;
 
-    // Efecto de sonido y háptico
     if (delta > 0) {
       sound.playMatchDrop(counterStyle === 'tiza' ? 'chalk' : 'poker');
       triggerHaptic(20);
@@ -339,51 +338,49 @@ export default function AnotaTruco() {
         />
       )}
 
-      <div className="flex flex-col h-full flex-1 min-h-[100svh] max-w-5xl mx-auto p-2 sm:p-4 text-stone-100 select-none">
+      {/* CONTENEDOR PRINCIPAL: 100dvh exacto sin scroll exterior */}
+      <div className="flex flex-col h-[100dvh] max-h-[100dvh] w-full max-w-5xl mx-auto p-1.5 sm:p-3 text-stone-100 select-none overflow-hidden justify-between">
         {/* =========================================================
             BARRA SUPERIOR: BRANDING & ACCIONES RÁPIDAS
             ========================================================= */}
-        <header className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-stone-800/80">
+        <header className="flex items-center justify-between gap-1.5 pb-1 border-b border-stone-800/80 flex-shrink-0">
           {/* Logo & Título (Click para volver al inicio) */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => {
                 sound.playClick();
                 setShowSplash(true);
               }}
               title="Volver a la portada de inicio"
-              className="w-9 h-9 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 flex items-center justify-center text-amber-400 shadow-inner pop-btn transition-all"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 flex items-center justify-center text-amber-400 shadow-inner pop-btn transition-all flex-shrink-0"
             >
-              <FontAwesomeIcon icon={faHouse} className="text-base" />
+              <FontAwesomeIcon icon={faHouse} className="text-xs sm:text-sm" />
             </button>
 
             <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-xl sm:text-2xl font-black font-truco tracking-wide text-amber-200 drop-shadow">
+              <div className="flex items-center gap-1">
+                <h1 className="text-base sm:text-xl font-black font-truco tracking-wide text-amber-200 drop-shadow leading-tight">
                   ANOTA TRUCO
                 </h1>
-                <span className="text-[10px] font-mono font-bold bg-amber-950/80 text-amber-400 border border-amber-700/50 px-1.5 py-0.5 rounded">
+                <span className="text-[8px] sm:text-[9px] font-mono font-bold bg-amber-950/80 text-amber-400 border border-amber-700/50 px-1 rounded">
                   CRIOLLO
                 </span>
               </div>
-              <p className="text-[10px] sm:text-xs text-stone-400 tracking-wider font-medium">
-                Anotador Oficial de Fósforos y Cartas
-              </p>
             </div>
           </div>
 
           {/* Toolbar con FontAwesome */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-1.5">
             {/* Mano Indicator Button */}
             <button
               onClick={rotateMano}
               title="Girar quién es Mano"
-              className="px-2.5 py-1.5 bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 border border-amber-700/50 rounded-xl text-xs font-bold flex items-center gap-1.5 pop-btn"
+              className="px-2 py-1 bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 border border-amber-700/50 rounded-lg text-[11px] font-bold flex items-center gap-1 pop-btn"
             >
-              <FontAwesomeIcon icon={faHandPointRight} className="text-amber-400" />
-              <span className="hidden sm:inline">Mano:</span>
-              <span className="text-yellow-300 underline font-black">
-                {players.find((p) => p.id === manoPlayerId)?.name.substring(0, 8)}
+              <FontAwesomeIcon icon={faHandPointRight} className="text-amber-400 text-[10px]" />
+              <span className="hidden xs:inline sm:inline">Mano:</span>
+              <span className="text-yellow-300 underline font-black max-w-[60px] truncate">
+                {players.find((p) => p.id === manoPlayerId)?.name}
               </span>
             </button>
 
@@ -393,10 +390,10 @@ export default function AnotaTruco() {
                 sound.playClick();
                 setIsGuideOpen(true);
               }}
-              title="Ver jerarquía de cartas y reglamento"
-              className="w-9 h-9 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-amber-300 rounded-xl flex items-center justify-center pop-btn transition-colors"
+              title="Ver reglamento y jerarquía"
+              className="w-8 h-8 sm:w-8.5 sm:h-8.5 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-amber-300 rounded-lg flex items-center justify-center pop-btn transition-colors"
             >
-              <FontAwesomeIcon icon={faScroll} />
+              <FontAwesomeIcon icon={faScroll} className="text-xs" />
             </button>
 
             {/* Historial */}
@@ -406,11 +403,11 @@ export default function AnotaTruco() {
                 setIsHistoryOpen(true);
               }}
               title="Historial de jugadas"
-              className="w-9 h-9 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-white rounded-xl flex items-center justify-center relative pop-btn transition-colors"
+              className="w-8 h-8 sm:w-8.5 sm:h-8.5 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-white rounded-lg flex items-center justify-center relative pop-btn transition-colors"
             >
-              <FontAwesomeIcon icon={faClockRotateLeft} />
+              <FontAwesomeIcon icon={faClockRotateLeft} className="text-xs" />
               {historyEntries.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-stone-950 font-bold text-[9px] flex items-center justify-center font-mono shadow">
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-amber-500 text-stone-950 font-bold text-[8px] flex items-center justify-center font-mono shadow">
                   {historyEntries.length > 99 ? '99+' : historyEntries.length}
                 </span>
               )}
@@ -419,22 +416,13 @@ export default function AnotaTruco() {
             {/* Sonido Toggle */}
             <button
               onClick={toggleSound}
-              title={soundEnabled ? 'Silenciar sonidos' : 'Activar sonidos'}
-              className="w-9 h-9 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-white rounded-xl flex items-center justify-center pop-btn transition-colors"
+              title={soundEnabled ? 'Silenciar' : 'Activar sonidos'}
+              className="w-8 h-8 sm:w-8.5 sm:h-8.5 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-white rounded-lg flex items-center justify-center pop-btn transition-colors"
             >
               <FontAwesomeIcon
                 icon={soundEnabled ? faVolumeHigh : faVolumeXmark}
-                className={soundEnabled ? 'text-amber-400' : 'text-stone-500'}
+                className={soundEnabled ? 'text-amber-400 text-xs' : 'text-stone-500 text-xs'}
               />
-            </button>
-
-            {/* Pantalla Completa */}
-            <button
-              onClick={toggleFullscreen}
-              title="Pantalla completa"
-              className="w-9 h-9 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-white rounded-xl flex items-center justify-center pop-btn transition-colors hidden sm:flex"
-            >
-              <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} />
             </button>
 
             {/* Configuración / Temas */}
@@ -443,10 +431,10 @@ export default function AnotaTruco() {
                 sound.playClick();
                 setIsSettingsOpen(true);
               }}
-              title="Personalizar mesa y anotador"
-              className="w-9 h-9 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-white rounded-xl flex items-center justify-center pop-btn transition-colors"
+              title="Ajustes"
+              className="w-8 h-8 sm:w-8.5 sm:h-8.5 bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-white rounded-lg flex items-center justify-center pop-btn transition-colors"
             >
-              <FontAwesomeIcon icon={faSliders} />
+              <FontAwesomeIcon icon={faSliders} className="text-xs" />
             </button>
           </div>
         </header>
@@ -454,83 +442,71 @@ export default function AnotaTruco() {
         {/* =========================================================
             BARRA DE AJUSTE RÁPIDO DE PARTIDA (Jugadores / Puntos)
             ========================================================= */}
-        <div className="bg-stone-950/80 rounded-2xl p-2.5 my-2.5 border border-stone-800 shadow-md flex flex-wrap items-center justify-between gap-2.5 text-xs">
+        <div className="bg-stone-950/80 rounded-xl p-1.5 my-1 sm:my-1.5 border border-stone-800/90 shadow-sm flex items-center justify-between gap-1 text-[11px] sm:text-xs flex-shrink-0">
           {/* Selector de Modo */}
-          <div className="flex items-center bg-stone-900 p-1 rounded-xl border border-stone-800">
+          <div className="flex items-center bg-stone-900 p-0.5 rounded-lg border border-stone-800">
             <button
               onClick={() => handlePlayerMode(2)}
-              className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition-all pop-btn ${
+              className={`px-2 py-1 rounded font-bold flex items-center gap-1 transition-all pop-btn ${
                 numPlayers === 2
                   ? 'bg-amber-600 text-stone-950 shadow'
                   : 'text-stone-400 hover:text-stone-200'
               }`}
             >
-              <FontAwesomeIcon icon={faUsers} />
-              <span>2 Equipos</span>
+              <FontAwesomeIcon icon={faUsers} className="text-[10px]" />
+              <span>2 Eq</span>
             </button>
             <button
               onClick={() => handlePlayerMode(3)}
-              className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition-all pop-btn ${
+              className={`px-2 py-1 rounded font-bold flex items-center gap-1 transition-all pop-btn ${
                 numPlayers === 3
                   ? 'bg-amber-600 text-stone-950 shadow'
                   : 'text-stone-400 hover:text-stone-200'
               }`}
             >
-              <FontAwesomeIcon icon={faUser} />
-              <span>Trío (3)</span>
+              <FontAwesomeIcon icon={faUser} className="text-[10px]" />
+              <span>Trío</span>
             </button>
           </div>
 
           {/* Selector de Puntos Objetivo */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-amber-400/90 font-bold uppercase tracking-wider text-[10px] hidden sm:inline">
-              A jugar:
-            </span>
+          <div className="flex items-center gap-1">
             {[15, 18, 24, 30].map((pts) => (
               <button
                 key={pts}
                 onClick={() => setTargetPoints(pts)}
-                className={`min-w-[34px] h-8 px-2 rounded-lg font-mono font-bold transition-all pop-btn border ${
+                className={`min-w-[28px] h-7 px-1 rounded-lg font-mono font-bold transition-all pop-btn border text-[11px] ${
                   target === pts
-                    ? 'bg-amber-500 border-amber-300 text-stone-950 shadow scale-105'
-                    : 'bg-stone-900 border-stone-800 text-stone-300 hover:border-amber-700/60'
+                    ? 'bg-amber-500 border-amber-300 text-stone-950 shadow'
+                    : 'bg-stone-900 border-stone-800 text-stone-300'
                 }`}
               >
                 {pts}
               </button>
             ))}
-            {/* Custom points input */}
-            <div className="flex items-center bg-stone-900 rounded-lg border border-stone-800 px-2 h-8">
-              <input
-                type="number"
-                placeholder="Otro"
-                value={customTarget}
-                onChange={handleCustomTarget}
-                className="w-11 bg-transparent text-center font-mono font-bold text-amber-200 outline-none placeholder:text-stone-600 text-xs"
-              />
-            </div>
           </div>
 
           {/* Acciones de Control: Deshacer y Reiniciar */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button
               onClick={undo}
               disabled={history.length === 0}
-              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 disabled:opacity-30 disabled:hover:bg-stone-900 rounded-xl text-amber-200 border border-stone-700 flex items-center gap-1.5 pop-btn font-semibold"
+              title="Deshacer jugada"
+              className="px-2 py-1 bg-stone-900 hover:bg-stone-800 disabled:opacity-30 rounded-lg text-amber-200 border border-stone-700 flex items-center gap-1 pop-btn font-semibold text-[11px]"
             >
-              <FontAwesomeIcon icon={faArrowRotateLeft} />
-              <span>Deshacer</span>
+              <FontAwesomeIcon icon={faArrowRotateLeft} className="text-[10px]" />
+              <span className="hidden xs:inline">Deshacer</span>
             </button>
             <button
               onClick={() => {
-                if (window.confirm('¿Reiniciar la partida a 0 puntos?')) {
+                if (window.confirm('¿Reiniciar a 0 pts?')) {
                   resetGame();
                 }
               }}
-              className="px-3 py-1.5 bg-red-950/60 hover:bg-red-900 text-red-200 rounded-xl border border-red-800/60 pop-btn font-semibold flex items-center gap-1.5"
+              title="Reiniciar partida"
+              className="px-2 py-1 bg-red-950/60 hover:bg-red-900 text-red-200 rounded-lg border border-red-800/60 pop-btn font-semibold text-[11px]"
             >
-              <FontAwesomeIcon icon={faRotateLeft} />
-              <span>Reiniciar</span>
+              <FontAwesomeIcon icon={faRotateLeft} className="text-[10px]" />
             </button>
           </div>
         </div>
@@ -539,35 +515,33 @@ export default function AnotaTruco() {
             BANNER DE GANADOR (TRIUNFO CRIOLLO)
             ========================================================= */}
         {winner && (
-          <div className="my-2.5 p-4 rounded-2xl bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 border-2 border-yellow-200 shadow-2xl text-stone-950 text-center animate-fade-in flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-3 text-left">
-              <div className="w-12 h-12 rounded-2xl bg-stone-950 text-yellow-400 flex items-center justify-center text-2xl shadow-md flex-shrink-0">
-                <FontAwesomeIcon icon={faTrophy} />
-              </div>
+          <div className="my-1 p-2.5 rounded-xl bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 border-2 border-yellow-200 shadow-xl text-stone-950 text-center animate-fade-in flex items-center justify-between gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 text-left">
+              <FontAwesomeIcon icon={faTrophy} className="text-xl text-stone-950" />
               <div>
-                <span className="text-[11px] font-black uppercase tracking-widest text-stone-900 block">
-                  ¡¡CANTA RETRUCO Y FESTEJA!!
+                <span className="text-[9px] font-black uppercase tracking-wider block leading-none">
+                  ¡¡GANÓ EL PARTIDO!!
                 </span>
-                <h2 className="text-xl sm:text-2xl font-black font-truco uppercase tracking-tight">
-                  {winner} HA GANADO EL PARTIDO
+                <h2 className="text-sm sm:text-base font-black font-truco uppercase leading-tight truncate">
+                  {winner}
                 </h2>
               </div>
             </div>
             <button
               onClick={() => resetGame()}
-              className="px-6 py-2.5 bg-stone-950 hover:bg-stone-900 text-amber-300 font-bold rounded-xl border border-amber-400/40 shadow-lg text-xs uppercase tracking-widest pop-btn flex items-center gap-2"
+              className="px-3 py-1.5 bg-stone-950 hover:bg-stone-900 text-amber-300 font-bold rounded-lg text-[11px] uppercase tracking-wider pop-btn flex items-center gap-1 flex-shrink-0"
             >
-              <FontAwesomeIcon icon={faRotate} />
-              Revancha Criolla
+              <FontAwesomeIcon icon={faRotate} className="text-[10px]" />
+              Revancha
             </button>
           </div>
         )}
 
         {/* =========================================================
-            MESA DE JUEGO (PAÑO / MADERA / PIZARRA)
+            MESA DE JUEGO (PAÑO / MADERA / PIZARRA) - FLEX-1 RESPONSIVE
             ========================================================= */}
         <main
-          className={`theme-${tableTheme} rounded-3xl p-2.5 sm:p-4 flex-1 flex gap-2.5 sm:gap-4 relative overflow-hidden transition-all`}
+          className={`theme-${tableTheme} rounded-2xl p-1.5 sm:p-2.5 flex-1 min-h-0 flex gap-1.5 sm:gap-2.5 relative overflow-hidden transition-all`}
         >
           {players.map((player) => {
             const isMano = player.id === manoPlayerId;
@@ -575,13 +549,13 @@ export default function AnotaTruco() {
             return (
               <div
                 key={player.id}
-                className={`player-card rounded-2xl p-2.5 sm:p-3 flex-1 flex flex-col justify-between relative ${
+                className={`player-card rounded-xl p-1.5 sm:p-2 flex-1 min-h-0 flex flex-col justify-between relative overflow-hidden ${
                   isMano ? 'is-mano' : ''
                 }`}
               >
                 {/* Header de la Tarjeta (Nombre + Badge de Mano) */}
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
                     {/* Mano Badge */}
                     <button
                       onClick={() => {
@@ -589,15 +563,15 @@ export default function AnotaTruco() {
                         sound.playClick();
                         triggerHaptic(20);
                       }}
-                      title={isMano ? 'Este equipo es Mano' : 'Hacer Mano a este equipo'}
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-all ${
+                      title={isMano ? 'Es Mano' : 'Hacer Mano'}
+                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1 transition-all ${
                         isMano
                           ? 'mano-coin text-stone-950 font-black'
-                          : 'bg-black/40 text-stone-500 hover:text-stone-300 border border-white/5'
+                          : 'bg-black/40 text-stone-500 border border-white/5'
                       }`}
                     >
-                      <FontAwesomeIcon icon={faHandPointRight} className="text-[9px]" />
-                      <span>{isMano ? 'ES MANO' : 'Pie'}</span>
+                      <FontAwesomeIcon icon={faHandPointRight} className="text-[8px]" />
+                      <span>{isMano ? 'MANO' : 'Pie'}</span>
                     </button>
 
                     {/* Botón para editar nombre */}
@@ -605,7 +579,7 @@ export default function AnotaTruco() {
                       onClick={() =>
                         setEditingPlayerId(editingPlayerId === player.id ? null : player.id)
                       }
-                      className="text-stone-400 hover:text-amber-300 text-xs p-1"
+                      className="text-stone-400 hover:text-amber-300 text-[11px] p-0.5"
                       title="Editar nombre"
                     >
                       <FontAwesomeIcon
@@ -623,30 +597,30 @@ export default function AnotaTruco() {
                       onChange={(e) => updateName(player.id, e.target.value)}
                       onBlur={() => setEditingPlayerId(null)}
                       onKeyDown={(e) => e.key === 'Enter' && setEditingPlayerId(null)}
-                      className="w-full bg-stone-900/90 text-center font-truco font-bold text-base sm:text-lg text-amber-200 border border-amber-500 rounded-lg py-1 px-2 mb-1 outline-none shadow-inner"
+                      className="w-full bg-stone-900/90 text-center font-truco font-bold text-xs sm:text-sm text-amber-200 border border-amber-500 rounded py-0.5 px-1 mb-0.5 outline-none"
                     />
                   ) : (
                     <h2
                       onClick={() => setEditingPlayerId(player.id)}
-                      className="text-center font-truco font-black text-base sm:text-xl text-amber-100 hover:text-yellow-300 cursor-pointer transition-colors truncate px-1"
+                      className="text-center font-truco font-black text-xs sm:text-base text-amber-100 hover:text-yellow-300 cursor-pointer transition-colors truncate px-0.5"
                     >
                       {player.name}
                     </h2>
                   )}
 
                   {/* Contador Numérico Principal */}
-                  <div className="text-center my-1">
-                    <div className="font-mono-score font-black text-4xl sm:text-5xl text-amber-100 drop-shadow-md leading-none tracking-tight">
+                  <div className="text-center my-0.5">
+                    <div className="font-mono-score font-black text-3xl sm:text-4xl text-amber-100 drop-shadow leading-none tracking-tight">
                       {player.score}
                     </div>
-                    <div className="text-[10px] sm:text-xs font-mono font-bold text-amber-300/60 mt-0.5">
-                      {player.score >= target ? '¡GANÓ!' : `Faltan ${target - player.score} pts`}
+                    <div className="text-[9px] sm:text-[10px] font-mono font-bold text-amber-300/60 mt-0.5">
+                      {player.score >= target ? '¡GANÓ!' : `Faltan ${target - player.score}`}
                     </div>
                   </div>
                 </div>
 
                 {/* Tablero de Fósforos / Tiza / Porotos */}
-                <div className="flex-1 my-2 flex flex-col min-h-[140px]">
+                <div className="flex-1 min-h-0 my-1 flex flex-col overflow-hidden">
                   <MatchBoard
                     score={player.score}
                     target={target}
@@ -655,39 +629,39 @@ export default function AnotaTruco() {
                 </div>
 
                 {/* Botonera Táctil (+1, -1, Cantos Rápidos) */}
-                <div className="space-y-1.5 pt-2 border-t border-white/10">
-                  {/* Botón de Cantos Rápidos (+2 Envido, +3 Truco, Falta Envido, etc.) */}
+                <div className="space-y-1 pt-1 border-t border-white/10 flex-shrink-0">
+                  {/* Botón de Cantos Rápidos */}
                   <button
                     onClick={() => {
                       sound.playClick();
                       setCantoModalTargetPlayer(player);
                     }}
                     disabled={winner !== null}
-                    className="w-full py-1.5 bg-stone-900/90 hover:bg-stone-800 border border-amber-700/50 hover:border-amber-500 text-amber-200 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 pop-btn transition-colors disabled:opacity-40"
+                    className="w-full py-1 bg-stone-900/90 hover:bg-stone-800 border border-amber-700/50 text-amber-200 font-bold rounded-lg text-[11px] flex items-center justify-center gap-1 pop-btn disabled:opacity-40"
                   >
-                    <FontAwesomeIcon icon={faFire} className="text-amber-400 text-xs" />
-                    <span>Cantos Rápidos</span>
+                    <FontAwesomeIcon icon={faFire} className="text-amber-400 text-[10px]" />
+                    <span>Cantos</span>
                   </button>
 
                   {/* Botones rápidos -1 / +1 */}
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-1">
                     <button
                       onClick={() => modifyScore(player.id, -1)}
                       disabled={player.score <= 0 || winner !== null}
-                      className="pop-btn flex-1 py-2.5 bg-red-950/70 hover:bg-red-900 active:bg-red-800 text-red-200 border border-red-800/60 font-mono font-black text-lg rounded-xl shadow-md disabled:opacity-25 flex items-center justify-center gap-1"
+                      className="pop-btn flex-1 py-1.5 sm:py-2 bg-red-950/70 hover:bg-red-900 text-red-200 border border-red-800/60 font-mono font-black text-base sm:text-lg rounded-lg shadow-md disabled:opacity-25 flex items-center justify-center gap-1"
                       title="Restar 1 punto"
                     >
-                      <FontAwesomeIcon icon={faMinus} className="text-xs" />
+                      <FontAwesomeIcon icon={faMinus} className="text-[10px]" />
                       <span>1</span>
                     </button>
 
                     <button
                       onClick={() => modifyScore(player.id, 1)}
                       disabled={player.score >= target || winner !== null}
-                      className="pop-btn flex-[2] py-2.5 bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-mono font-black text-xl rounded-xl shadow-lg border border-amber-300/60 disabled:opacity-25 flex items-center justify-center gap-1.5"
+                      className="pop-btn flex-[2] py-1.5 sm:py-2 bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 text-stone-950 font-mono font-black text-lg sm:text-xl rounded-lg shadow-md border border-amber-300/60 disabled:opacity-25 flex items-center justify-center gap-1"
                       title="Sumar 1 punto"
                     >
-                      <FontAwesomeIcon icon={faPlus} className="text-xs" />
+                      <FontAwesomeIcon icon={faPlus} className="text-[10px]" />
                       <span>1</span>
                     </button>
                   </div>
@@ -700,13 +674,11 @@ export default function AnotaTruco() {
         {/* =========================================================
             MODALES AUXILIARES
             ========================================================= */}
-        {/* Guía de Cartas y Reglamento */}
         <CardsGuideModal
           isOpen={isGuideOpen}
           onClose={() => setIsGuideOpen(false)}
         />
 
-        {/* Historial de Partida */}
         <MatchHistoryModal
           isOpen={isHistoryOpen}
           onClose={() => setIsHistoryOpen(false)}
@@ -715,7 +687,6 @@ export default function AnotaTruco() {
           onClearHistory={() => setHistoryEntries([])}
         />
 
-        {/* Cantos Rápidos */}
         {cantoModalTargetPlayer && (
           <QuickCantoModal
             isOpen={true}
@@ -732,7 +703,6 @@ export default function AnotaTruco() {
           />
         )}
 
-        {/* Ajustes y Temas */}
         <SettingsModal
           isOpen={isSettingsOpen}
           onClose={() => setIsSettingsOpen(false)}
@@ -746,9 +716,9 @@ export default function AnotaTruco() {
           onToggleVibration={toggleVibration}
         />
 
-        {/* Footer */}
-        <footer className="text-center py-2 text-[10px] text-stone-500 font-medium tracking-wider">
-          ANOTA TRUCO CRIOLLO • HECHO PARA COMPARTIR ENTRE AMIGOS Y FAMILIA
+        {/* Footer Ultra Compacto */}
+        <footer className="text-center text-[9px] text-stone-500 font-medium tracking-wider flex-shrink-0 pt-0.5">
+          ANOTA TRUCO CRIOLLO • CELULAR
         </footer>
       </div>
     </>
