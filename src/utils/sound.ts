@@ -21,8 +21,12 @@ class SoundEngine {
   }
 
   // Sonido de colocar un fósforo / ficha de madera
-  playMatchDrop(theme: 'poker' | 'wood' | 'chalk' = 'poker') {
+  playMatchDrop(theme: 'poker' | 'wood' | 'chalk' | 'coin' = 'poker') {
     if (this.isMuted) return;
+    if (theme === 'coin') {
+      this.playCoin();
+      return;
+    }
     this.initCtx();
     if (!this.ctx) return;
 
@@ -85,6 +89,195 @@ class SoundEngine {
     osc2.start(t);
     osc.stop(t + 0.07);
     osc2.stop(t + 0.04);
+  }
+
+  // Sonido metálico de moneda antigua / patacón
+  playCoin() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    const osc1 = this.ctx.createOscillator();
+    const osc2 = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(1800, t);
+    osc1.frequency.exponentialRampToValueAtTime(3200, t + 0.02);
+    osc1.frequency.exponentialRampToValueAtTime(2400, t + 0.12);
+
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(3600, t);
+    osc2.frequency.exponentialRampToValueAtTime(4800, t + 0.03);
+    osc2.frequency.exponentialRampToValueAtTime(3400, t + 0.15);
+
+    gain.gain.setValueAtTime(0.35, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc1.start(t);
+    osc2.start(t);
+    osc1.stop(t + 0.16);
+    osc2.stop(t + 0.16);
+  }
+
+  // Sonido de clic / tick de ruleta de sorteo
+  playTick() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(800, t);
+    osc.frequency.exponentialRampToValueAtTime(300, t + 0.02);
+
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(t);
+    osc.stop(t + 0.025);
+  }
+
+  // Detección y cache de voz argentina rioplatense
+  private cachedArgVoice: SpeechSynthesisVoice | null = null;
+
+  private getArgentineVoice(): SpeechSynthesisVoice | null {
+    if (this.cachedArgVoice) return this.cachedArgVoice;
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) return null;
+
+    // Prioridad 1: Voz explícitamente argentina (es-AR, es_AR o nombre con Argentina/Tomas/Diego/Isabela)
+    const arVoice = voices.find(
+      (v) =>
+        v.lang === 'es-AR' ||
+        v.lang === 'es_AR' ||
+        v.name.toLowerCase().includes('argentin') ||
+        v.name.toLowerCase().includes('tomas') ||
+        v.name.toLowerCase().includes('diego')
+    );
+    if (arVoice) {
+      this.cachedArgVoice = arVoice;
+      return arVoice;
+    }
+
+    // Prioridad 2: Voces latinoamericanas (es-419, es-US, es-UY, es-CL, es-MX)
+    const latamVoice = voices.find(
+      (v) =>
+        v.lang === 'es-419' ||
+        v.lang === 'es-US' ||
+        v.lang === 'es-UY' ||
+        v.lang === 'es-CL' ||
+        v.lang === 'es-MX'
+    );
+    if (latamVoice) {
+      this.cachedArgVoice = latamVoice;
+      return latamVoice;
+    }
+
+    // Prioridad 3: Cualquier voz en español
+    const anyEs = voices.find((v) => v.lang.toLowerCase().startsWith('es'));
+    if (anyEs) {
+      this.cachedArgVoice = anyEs;
+      return anyEs;
+    }
+
+    return null;
+  }
+
+  // Declamación o pronunciación de frase criolla con voz argentina y acorde criollo
+  speakPhrase(phrase: string) {
+    if (this.isMuted) return;
+
+    // Tocar golpe/acorde criollo breve de fondo
+    this.playGuitarStrum();
+
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    try {
+      window.speechSynthesis.cancel(); // Cancelar locución anterior
+
+      // Formatear texto con pausas naturales criollas
+      const cleanPhrase = phrase.replace(/!/g, ' ').trim();
+      const utterance = new SpeechSynthesisUtterance(phrase);
+      utterance.lang = 'es-AR';
+      utterance.rate = 0.98; // Cadencia pausada criolla
+      utterance.pitch = 0.92; // Tono más grave / de gaucho
+      utterance.volume = 1.0;
+
+      const voice = this.getArgentineVoice();
+      if (voice) {
+        utterance.voice = voice;
+      }
+
+      // Evitar que el recolector de basura de Chrome corte el audio
+      window.speechSynthesis.speak(utterance);
+    } catch {}
+  }
+
+  // Acorde o rasguido criollo de guitarra sintetizado con Web Audio API
+  playGuitarStrum() {
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    // Notas de rasguido criollo en Mi menor: E2, B2, E3, G3, B3, E4
+    const stringFreqs = [82.41, 123.47, 164.81, 196.0, 246.94, 329.63];
+
+    stringFreqs.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, t + idx * 0.015);
+
+      gain.gain.setValueAtTime(0.001, t + idx * 0.015);
+      gain.gain.linearRampToValueAtTime(0.12, t + idx * 0.015 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.015 + 0.35);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(t + idx * 0.015);
+      osc.stop(t + idx * 0.015 + 0.38);
+    });
+  }
+
+  // Sonido de clic / tick de ruleta de sorteo
+  playTick() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(800, t);
+    osc.frequency.exponentialRampToValueAtTime(300, t + 0.02);
+
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(t);
+    osc.stop(t + 0.025);
   }
 
   // Sonido al restar punto (madera que se desliza o borrado rápido)
@@ -173,3 +366,4 @@ class SoundEngine {
 }
 
 export const sound = new SoundEngine();
+

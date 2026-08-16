@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type CounterStyle = 'fosforos' | 'tiza' | 'porotos';
+export type CounterStyle = 'fosforos' | 'tiza' | 'porotos' | 'patacones';
 
 interface MatchGroupProps {
   count: number;
@@ -31,6 +31,22 @@ export default function MatchGroup({ count, style = 'fosforos' }: MatchGroupProp
             className={`poroto-bean poroto-${idx + 1} ${idx === 4 ? 'col-span-2' : ''}`}
             title={`Punto ${idx + 1}`}
           />
+        ))}
+      </div>
+    );
+  }
+
+  if (style === 'patacones') {
+    return (
+      <div className="patacon-box flex-shrink-0 relative w-12 h-12 m-1 flex flex-wrap items-center justify-center p-0.5 gap-1">
+        {Array.from({ length: Math.min(count, 5) }).map((_, idx) => (
+          <div
+            key={idx}
+            className={`patacon-coin patacon-${idx + 1} ${idx === 4 ? 'col-span-2 scale-110' : ''}`}
+            title={`Patacón ${idx + 1}`}
+          >
+            <span className="patacon-inner-sun">☀️</span>
+          </div>
         ))}
       </div>
     );
